@@ -131,8 +131,10 @@ app.get("/secrets", (req, res) => {
       console.log(err);
     } else {
       if (foundUsers) {
-        res.render("secrets", { usersWithSecrets: foundUsers });
-        console.log(foundUsers);
+        res.render("secrets", {
+          usersWithSecrets: foundUsers,
+          userId: req.user._id,
+        });
       }
     }
   });
@@ -168,8 +170,11 @@ app.get("/secrets/:userId", (req, res) => {
       console.log(err);
     } else {
       if (foundUser) {
-        res.render("userSecrets", { SECRET: foundUser.secret });
-        console.log(foundUser.secret);
+        if (req.isAuthenticated()) {
+          res.render("userSecrets", { SECRET: foundUser.secret });
+        } else {
+          res.redirect("/login");
+        }
       }
     }
   });
