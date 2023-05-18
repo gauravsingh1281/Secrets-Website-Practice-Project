@@ -81,7 +81,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: "https://secrets-website-practice-project-production.up.railway.app/facebook/secrets",
+      callbackURL: "https://secrets-website-practice-project-production.up.railway.app/auth/facebook/secrets",
     },
     function (accessToken, refreshToken, profile, cb) {
       User.findOrCreate({ facebookId: profile.id }, function (err, user) {
