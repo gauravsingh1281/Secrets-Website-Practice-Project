@@ -10,7 +10,6 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook");
 const findOrCreate = require("mongoose-findorcreate");
 const app = express();
-const port = 3000;
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,7 +27,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose.set("strictQuery", false);
-mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+});
 
 const secretSchema = new mongoose.Schema({
   content: String,
@@ -63,7 +64,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/secrets",
+      callbackURL: "secrets-website-practice-project-production.up.railway.app/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
 
@@ -80,7 +81,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: "http://localhost:3000/auth/facebook/secrets",
+      callbackURL: "secrets-website-practice-project-production.up.railway.app/facebook/secrets",
     },
     function (accessToken, refreshToken, profile, cb) {
       User.findOrCreate({ facebookId: profile.id }, function (err, user) {
@@ -222,5 +223,11 @@ app.post("/login", (req, res) => {
     }
   });
 });
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
 
-app.listen(port, () => console.log(`App started listening on port ${port}!`));
+app.listen(port, () =>
+  console.log(`Server has started on port ${port} successfully !`)
+);
