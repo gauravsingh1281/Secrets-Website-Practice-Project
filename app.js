@@ -36,10 +36,21 @@ const secretSchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-  email: String,
-  password: String,
-  googleId: String,
-  facebookId: String,
+  username: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  facebookId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
   secret: [secretSchema],
 });
 
@@ -64,7 +75,8 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "https://secrets-website-practice-project-production.up.railway.app/auth/google/secrets",
+      callbackURL:
+        "https://secrets-website-practice-project-production.up.railway.app/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
 
@@ -81,7 +93,8 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: "https://secrets-website-practice-project-production.up.railway.app/auth/facebook/secrets",
+      callbackURL:
+        "https://secrets-website-practice-project-production.up.railway.app/auth/facebook/secrets",
     },
     function (accessToken, refreshToken, profile, cb) {
       User.findOrCreate({ facebookId: profile.id }, function (err, user) {
